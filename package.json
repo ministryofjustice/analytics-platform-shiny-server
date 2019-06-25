@@ -1,0 +1,41 @@
+{
+  "name": "analytics-platform-shiny-server",
+  "version": "1.0.0",
+  "description": "A shiny server for use on the MoJ Analytics Platform",
+  "main": "index.js",
+  "author": "Ministry of Justice (UK)",
+  "license": "AGPL-3.0",
+  "private": false,
+  "dependencies": {
+    "debug": "^4.1.1",
+    "http-proxy": "^1.17.0",
+    "node-static": "^0.7.11",
+    "sockjs": "^0.3.19",
+    "temp-dir": "^2.0.0",
+    "winston": "^3.2.1",
+    "ws": "^7.0.0"
+  },
+  "bin": {
+    "analytical-platform-shiny-server": "index.js"
+  },
+  "scripts": {
+    "start": "node ./index.js",
+    "build": "babel ./client/src/ -d static/ -s --verbose"
+  },
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ]
+  },
+  "browserslist": [
+    "> 2%, ie 10"
+  ],
+  "devDependencies": {
+    "@babel/cli": "^7.4.4",
+    "@babel/core": "^7.4.5",
+    "@babel/preset-env": "^7.4.5",
+    "eslint": "^4.19.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
+  }
+}

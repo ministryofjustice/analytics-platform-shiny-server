@@ -1,0 +1,6 @@
+library(shiny)
+PORT <- as.numeric(Sys.getenv('TARGET_PORT', 7999))
+SHINY_APP <- Sys.getenv('SHINY_APP', unset = './example')
+SCRIPT_DIR <- Sys.getenv('DIRNAME')
+source(paste(SCRIPT_DIR, '/R/injectSockJS.R', sep=''))
+shiny::runApp(SHINY_APP, port=PORT, launch.browser=FALSE)
