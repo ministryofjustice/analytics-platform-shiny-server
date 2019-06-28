@@ -26,9 +26,15 @@ const proxy = httpProxy.createServer({
 
 const sockjsEcho = sockjs.createServer(sockjsOpts);
 
+// 1. Sockjs to Websocket bridge
 const messageQueue = [];
 sockjsEcho.on('connection', (conn) => {
-  const ws = new WebSocket('ws://127.0.0.1:7999/websocket');
+  const ws = new WebSocket(
+    'ws://127.0.0.1:7999/websocket',
+    null,
+    { headers: conn.headers },
+  );
+
   ws.on('error', (err) => {
     log('error', err);
     conn.close();
@@ -114,6 +120,8 @@ shiny.stdout.on('data', (data) => {
 shiny.stderr.on('data', (data) => {
   log('info', `${data}`, { service: 'shiny.stderr' });
 });
+
+// 3. The actual web-server
 server.listen(process.env.PORT || 9999, '0.0.0.0');
 
 process.on('SIGINT', () => {
