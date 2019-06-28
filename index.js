@@ -1,6 +1,10 @@
 #!/usr/bin/env node
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^_" }] */
 
+// Monkeypatch sockJs to allow custom headers
+// eslint-disable-next-line no-unused-vars,import/order
+const { Session } = require('./patchSession');
+
 const http = require('http');
 const sockjs = require('sockjs');
 const nodeStatic = require('node-static');
@@ -12,10 +16,10 @@ const path = require('path');
 const { log } = require('winston');
 require('./logging');
 
-// 1. Echo sockjs server
+// 1. Echo sockJs server
 const sockjsOpts = {
   prefix: '.*/__sockjs__(/[no]=\\w+)?',
-  log: (x, ...rest) => debug(`[${x}]`, ...rest),
+  log,
 
 };
 
@@ -79,7 +83,7 @@ server.addListener('request', (req, res) => {
       }
     });
   } else {
-    log('error', `not handled by proxy or static: ${req.url}`);
+    log('debug', `not handled by proxy or static: ${req.url}`);
   }
   return true;
 });
