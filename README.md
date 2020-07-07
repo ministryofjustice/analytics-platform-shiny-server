@@ -49,7 +49,7 @@ access it on http://localhost:9999
 ## How to release:
 
 1. Make your changes
-2. `yarn run build`
+2. `npm run build`
 3. Commit your files included transpiled ones in ./static/
 4. Push to a new branch on github and make a PR
 
