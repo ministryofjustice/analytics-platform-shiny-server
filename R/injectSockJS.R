@@ -1,3 +1,5 @@
+# Add an HTTP filter to inject SockJS scripts etc into the Shiny app's HTML responses
+
 library(shiny)
 library(htmltools)
 
@@ -17,21 +19,30 @@ if (nzchar(Sys.getenv('SHINY_GAID'))) {
     gaScript <- tags$script(src = "https://www.google-analytics.com/analytics.js", async = 'async')
 }
 
+# Assemble the string that we're going to inject into the <head> section
 inject <- paste(
+    # SockJS scripts
     tags$script(src = '__assets__/sockjs.js'),
     tags$script(src = '__assets__/shiny-server-client.js'),
+
+    # Inline JS call that sets Shiny's protocol/transport options
     tags$script(
         sprintf("preShinyInit({reconnect:%s, transports:[%s]});",
         reconnect, paste(shQuote(transports), collapse = ", ")
         )
     ),
+
+    # Add Google Analytics tracking JS
     gaTrackingCode,
     gaScript,
+
+    # Add CSS that makes it clearer to the user that its reconnecting?
     tags$link(rel = 'stylesheet', type = 'text/css', href = '__assets__/shiny-server.css'),
     HTML("</head>"),
     sep = "\n"
 )
 
+# Inject into <head> using an HTTP filter
 filter <- function(...) {
     # The signature of filter functions changed between Shiny 0.4.0 and
     # 0.4.1; previously the parameters were (ws, headers, response) and
