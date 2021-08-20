@@ -109,7 +109,9 @@ it. So we've decided to effectively treat this as a fork for licensing purposes 
 
 ### Example App (Creative Commons)
 
-The example app that is served when no SHINY_APP is specified has it's [own licence](./example/LICENCE)
+The example app that is served when no SHINY_APP is specified has it's [own licence](./example/LICENCE).
+
+The example app [requires a working R and Rshiny install](./example/README.md#running-the-example-app).
 
 ### Sockjs (MIT)
 
