@@ -13,7 +13,7 @@
     "sockjs": "^0.3.19",
     "temp-dir": "^2.0.0",
     "winston": "^3.2.1",
-    "ws": "~7.1.0"
+    "ws": "~7.4.6"
   },
   "bin": {
     "analytics-platform-shiny-server": "index.js"
