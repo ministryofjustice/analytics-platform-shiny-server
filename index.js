@@ -7,7 +7,7 @@ const { Session } = require('./patchSession');
 
 const http = require('http');
 const sockjs = require('sockjs');
-const nodeStatic = require('node-static');
+const nodeStatic = require('@brettz9/node-static');
 const httpProxy = require('http-proxy');
 const WebSocket = require('ws');
 const debug = require('debug')('app');

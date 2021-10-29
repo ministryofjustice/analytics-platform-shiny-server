@@ -9,7 +9,7 @@
   "dependencies": {
     "debug": "^4.1.1",
     "http-proxy": "^1.17.0",
-    "node-static": "^0.7.11",
+    "@brettz9/node-static": "^0.1.1",
     "sockjs": "^0.3.19",
     "temp-dir": "^2.0.0",
     "winston": "^3.2.1",
