@@ -31,7 +31,7 @@
     "> 2%, ie 10"
   ],
   "devDependencies": {
-    "@babel/cli": "^7.14",
+    "@babel/cli": "^7.15.7",
     "@babel/core": "^7.15",
     "@babel/preset-env": "^7.15",
     "eslint": "^7.32.0",
