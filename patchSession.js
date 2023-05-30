@@ -41,6 +41,7 @@ Session.prototype.decorateConnection = function (req) {
     'via',
     'x-real-ip',
     'x-forwarded-proto',
+    'access-control-allow-origin',
     'x-ssl',
     'dnt',
     'host',
