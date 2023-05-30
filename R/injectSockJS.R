@@ -21,16 +21,16 @@ if (nzchar(Sys.getenv('SHINY_GAID'))) {
 
 # Assemble the string that we're going to inject into the <head> section
 inject <- paste(
-    # SockJS scripts
-    tags$script(src = '__assets__/sockjs.js'),
-    tags$script(src = '__assets__/shiny-server-client.js'),
+    # # SockJS scripts
+    # tags$script(src = '__assets__/sockjs.js'),
+    # tags$script(src = '__assets__/shiny-server-client.js'),
 
     # Inline JS call that sets Shiny's protocol/transport options
-    tags$script(
-        sprintf("preShinyInit({reconnect:%s, transports:[%s]});",
-        reconnect, paste(shQuote(transports), collapse = ", ")
-        )
-    ),
+    # tags$script(
+    #     sprintf("preShinyInit({reconnect:%s, transports:[%s]});",
+    #     reconnect, paste(shQuote(transports), collapse = ", ")
+    #     )
+    # ),
 
     # Add Google Analytics tracking JS
     gaTrackingCode,

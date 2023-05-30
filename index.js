@@ -25,7 +25,7 @@
 const { Session } = require('./patchSession');
 
 const http = require('http');
-const sockjs = require('sockjs');
+// const sockjs = require('sockjs');
 const nodeStatic = require('@brettz9/node-static');
 const httpProxy = require('http-proxy');
 const WebSocket = require('ws');
@@ -41,10 +41,10 @@ require('./logging');
  * path to the process running locally on 127.0.0.1:7999 -
  * which is our shiny server.
  */
-const sockjsOpts = {
-  prefix: '.*/__sockjs__(/[no]=\\w+)?',
-  log,
-};
+// const sockjsOpts = {
+//   prefix: '.*/__sockjs__(/[no]=\\w+)?',
+//   log,
+// };
 
 const proxy = httpProxy.createServer({
   target: `http://127.0.0.1:${process.env.TARGET_PORT || 7999}`,
@@ -60,44 +60,44 @@ const messageQueue = [];
  * talk to Shiny. This web socket ensures that errors aside, data is
  * sent when it is possible to send it, and enqueued otherwise.
  */
-sockjsEcho.on('connection', (conn) => {
-  const ws = new WebSocket(
-    'ws://127.0.0.1:7999/websocket',
-    null,
-    { headers: conn.headers },
-  );
+// sockjsEcho.on('connection', (conn) => {
+//   const ws = new WebSocket(
+//     'ws://127.0.0.1:7999/websocket',
+//     null,
+//     { headers: conn.headers },
+//   );
 
-  ws.on('error', (err) => {
-    log('error', err);
-    conn.close();
-  });
+//   ws.on('error', (err) => {
+//     log('error', err);
+//     conn.close();
+//   });
 
-  log('debug', 'new connection');
-  ws.on('open', (_wsConn, _req) => {
-    log('info', 'connected to shiny', { service: 'target->proxy' });
-    ws.on('close', () => conn.close());
-    ws.on('message', (message) => {
-      log('debug', `${message}`, { service: 'target->proxy' });
-      conn.write(message);
-    });
-    while (messageQueue.length) {
-      ws.send(messageQueue.shift());
-    }
-  });
+//   log('debug', 'new connection');
+//   ws.on('open', (_wsConn, _req) => {
+//     log('info', 'connected to shiny', { service: 'target->proxy' });
+//     ws.on('close', () => conn.close());
+//     ws.on('message', (message) => {
+//       log('debug', `${message}`, { service: 'target->proxy' });
+//       conn.write(message);
+//     });
+//     while (messageQueue.length) {
+//       ws.send(messageQueue.shift());
+//     }
+//   });
 
-  conn.on('data', (message) => {
-    log('debug', `${message}`, { service: 'proxy->target' });
-    try {
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(message);
-      } else {
-        messageQueue.push(message);
-      }
-    } catch (e) {
-      log('debug', `bad message ${e}`);
-    }
-  });
-});
+//   conn.on('data', (message) => {
+//     log('debug', `${message}`, { service: 'proxy->target' });
+//     try {
+//       if (ws.readyState === WebSocket.OPEN) {
+//         ws.send(message);
+//       } else {
+//         messageQueue.push(message);
+//       }
+//     } catch (e) {
+//       log('debug', `bad message ${e}`);
+//     }
+//   });
+// });
 
 
 /*
@@ -107,17 +107,26 @@ sockjsEcho.on('connection', (conn) => {
 const staticDirectory = new nodeStatic.Server(path.join(__dirname, './static'));
 
 const server = http.createServer();
-sockjsEcho.installHandlers(server);
+// sockjsEcho.installHandlers(server);
+// server.addListener('request', (req, res) => {
+//   if (!req.url.startsWith('/__sockjs__')) {
+//     staticDirectory.serve(req, res, (err, _result) => {
+//       if (err) {
+//         proxy.web(req, res);
+//       }
+//     });
+//   } else {
+//     log('debug', `not handled by proxy or static: ${req.url}`);
+//   }
+//   return true;
+// });
+
 server.addListener('request', (req, res) => {
-  if (!req.url.startsWith('/__sockjs__')) {
-    staticDirectory.serve(req, res, (err, _result) => {
-      if (err) {
-        proxy.web(req, res);
-      }
-    });
-  } else {
-    log('debug', `not handled by proxy or static: ${req.url}`);
-  }
+  staticDirectory.serve(req, res, (err, _result) => {
+    if (err) {
+      proxy.web(req, res);
+    }
+  });
   return true;
 });
 
