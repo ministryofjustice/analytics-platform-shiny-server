@@ -51,7 +51,7 @@ const proxy = httpProxy.createServer({
   ws: true,
 });
 
-const sockjsEcho = sockjs.createServer(sockjsOpts);
+// const sockjsEcho = sockjs.createServer(sockjsOpts);
 
 const messageQueue = [];
 
