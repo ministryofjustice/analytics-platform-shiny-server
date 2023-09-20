@@ -30,10 +30,13 @@ function preShinyInit(options = { transports: [] }) {
     url += '/__sockjs__/';
     Shiny.shinyapp.$allowReconnect = true;
     $(document).on('shiny:disconnected', () => {
-      reconnectWithbackoff(
-        50,
-        1000,
-      );
+      console.log("Disconnected, show the dialog for reconnecting manually.");
+      Shiny.showReconnectDialog();
+      // Remove the auto-connecting behaviour 
+      // reconnectWithbackoff(
+      //   50,
+      //   1000,
+      // );
     });
     return new SockJS(url, options.transports, {});
   };
