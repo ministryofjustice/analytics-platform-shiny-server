@@ -1,21 +1,5 @@
 "use strict";
 
-function showReconnectDialog(delay) {
-  var reconnectTime = new Date().getTime() + delay;
-  if ((0, import_jquery35.default)("#shiny-reconnect-text").length > 0)
-    return;
-  var html = '<span id="shiny-reconnect-text">Attempting to reconnect</span><span id="shiny-reconnect-time"></span>';
-  var action = '<a id="shiny-reconnect-now" href="#" onclick="window.location.reload();">Try now</a>';
-  show({
-    id: "reconnect",
-    html: html,
-    action: action,
-    duration: null,
-    closeButton: false,
-    type: "warning"
-  });
-  updateTime(reconnectTime);
-}
 
 function reconnectWithbackoff(maxAttempts, waitFor) {
   var CONNECTING = 0;
@@ -35,7 +19,7 @@ function reconnectWithbackoff(maxAttempts, waitFor) {
       reconnectWithbackoff(--maxAttempts, waitFor * 1.125);
     }, waitFor);
   } else {
-    showReconnectDialog();
+    Shiny.showReconnectDialog();
   }
 } // eslint-disable-next-line no-unused-vars
 
@@ -51,9 +35,10 @@ function preShinyInit() {
     url += '/__sockjs__/';
     Shiny.shinyapp.$allowReconnect = true;
     $(document).on('shiny:disconnected', function () {
-      console.log("debug - disconnected, triggering reconnectWithbackoff.")
-
-      reconnectWithbackoff(50, 1000);
+      console.log("Disconnected, show the dialog for reconnecting manually.")
+      Shiny.showReconnectDialog();
+      // Remove the auto-connecting behaviour 
+      // reconnectWithbackoff(50, 1000);
     });
     return new SockJS(url, options.transports, {});
   };
