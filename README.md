@@ -39,6 +39,7 @@ To collect analytics about your app's usage, you could either add the snippet of
 | Use non-system R               | ✓ (will use R on PATH) | ✓\* (paid)           |
 | Timeouts (app and session)     | ✘                      | ✓                    |
 | Restart by writing restart.txt | ✘  (TODO)              | ✓                    |
+| Heartbeat on websocket connection | ✓                      | ✓                    |
 
 Here were the problems we had with [RStudio Shiny Server Open Source](https://rstudio.com/products/shiny/shiny-server/):
 
@@ -47,6 +48,7 @@ Here were the problems we had with [RStudio Shiny Server Open Source](https://rs
 * It logs to a file - this requires us to run a log shipper - it would be better to log to stdout for running as a container.
 * It has no health-check endpoint - reserved for the paid Pro version
 * No resource metrics - reserved for the paid Pro version
+* The most of environment variables won't be passed into R process due to the security reason (check the discussion [here](https://community.rstudio.com/t/how-to-access-os-environment-variable-from-shiny-apps-server-r/23822/2))
 
 We don't need several of the features of RStudio Shiny Server:
 
@@ -90,12 +92,33 @@ access it on http://localhost:9999
 
 ## Design
 
+### How to launch the shiny app?
+
+AP shiny server spawns R process to run `runServer.R` by passing all the environment variables.
 The key line of code is to call Shiny's own server method:
 
 ```r
 shiny::runApp('/myapp', port=80, launch.browser=FALSE)
 ```
+The above way only works when the shiny app has standard structure e.g. has app.R, or ui.R + server.R
+if the shiny app doesn't follow such structure e.g. using golm, then `runServer.R` needs to be overwritten on 
+application level.
 
+### How websocket connections works?
+
+AP shiny server uses sockjs family to provide websocket connection with fallback options:
+- client side: sockjs.js, https://github.com/sockjs/sockjs-client
+- server side: sockjs, https://github.com/sockjs/sockjs-node
+
+In order to replace the native socket object created by shiny javascript, this shiny server overwrites the key funciton of `createSocket` with 
+the feature of providing reconnecting attempts when the connection is closed. 
+
+The sockjs family implements the heartbeat to keep connecton long live, there is no need for shny app to implement it. Without the heartbeat, 
+the websocket connection won't be last time, mostly likely around 60 seconds (https://kubernetes.github.io/ingress-nginx/user-guide/miscellaneous/#websockets)
+
+`/info` call will be fired sockjs client side regularily, it is part of SockJS protocol. 
+
+### How to inject the sockjs(client side) to shiny app?
 It configures a shiny.http.response.filter to inject into the `<head>` of all sever responses the scripts for SockJS and protocol/transport options etc.
 
 It sets up logging to stdout using logging.js.
@@ -114,5 +137,4 @@ The example app that is served when no SHINY_APP is specified has it's [own lice
 The example app [requires a working R and Rshiny install](./example/README.md#running-the-example-app).
 
 ### Sockjs (MIT)
-
 [Sockjs](https://github.com/sockjs/sockjs-client) is bundled in this repository and is licenced under MIT.
