@@ -43,6 +43,8 @@ require('./logging');
  */
 const sockjsOpts = {
   prefix: '.*/__sockjs__(/[no]=\\w+)?',
+  heartbeat_delay: 15000,
+  disconnect_delay: 10000,
   log,
 };
 
