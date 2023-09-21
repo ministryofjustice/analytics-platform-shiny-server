@@ -6,14 +6,14 @@ function reconnectWithbackoff(maxAttempts, waitFor) {
   var OPEN = 1;
 
   if (Shiny.shinyapp.$socket === null || ![OPEN, CONNECTING].includes(Shiny.shinyapp.$socket.readyState)) {
-    console.log("debug - try to reschedule another reconnecting.")
+    console.log("Reschedule another reconnecting.");
     Shiny.shinyapp.$scheduleReconnect(1000);
   }
 
   if (Shiny.shinyapp.$socket !== null && Shiny.shinyapp.$socket.readyState === OPEN) {
     Shiny.hideReconnectDialog();
   } else if (maxAttempts > 0) {
-    console.log("debug - try to call reconnectWithbackoff again.")
+    console.log("Call reconnectWithbackoff again.");
 
     setTimeout(function () {
       reconnectWithbackoff(--maxAttempts, waitFor * 1.125);
