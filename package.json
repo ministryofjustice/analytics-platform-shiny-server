@@ -7,7 +7,7 @@
   "license": "AGPL-3.0",
   "private": false,
   "dependencies": {
-    "debug": "^4.1.1",
+    "debug": "^4.3.1",
     "http-proxy": "^1.17.0",
     "@brettz9/node-static": "^0.1.1",
     "sockjs": "^0.3.19",
